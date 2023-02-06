@@ -19,7 +19,18 @@ type DataValue = {
 };
 
 export const ChartsPage: FC = () => {
-    const { serverLogs, fetchLabelSpends } = useLogs();
+    const {
+        chartData,
+        fetchLabelSpends,
+        fetchLabelRevenue,
+        fetchLabelConversion,
+        fetchMonthlySpendsConversion,
+        fetchMonthlyRevenueConversion,
+        fetchMonthlyAttributedConversion,
+        fetchMonthlyRevenue,
+        fetchMonthlySpendsRevenue,
+        fetchMonthlyConversionRevenue,
+    } = useLogs();
 
     const [labelSpendsData, setLabelSpendsData] = useState<ChartType>({ labels: [], datasets: [] });
     const [labelRevenueData, setLabelRevenueData] = useState<ChartType>({ labels: [], datasets: [] });
@@ -30,105 +41,123 @@ export const ChartsPage: FC = () => {
     const [networkTrafficData, setNetworkTrafficData] = useState<ChartType>({ labels: [], datasets: [] });
     const [diskIOData, setDiskIOData] = useState<ChartType>({ labels: [], datasets: [] });
 
-    const onServerLogs = useCallback(async () => {
-        await fetchLabelSpends();
-    }, [fetchLabelSpends]);
+    const onFetchChartData = useCallback(() => {
+        Promise.all([
+            fetchLabelSpends(),
+            fetchLabelRevenue(),
+            fetchLabelConversion(),
+            fetchMonthlySpendsConversion(),
+            fetchMonthlyRevenueConversion(),
+            fetchMonthlyAttributedConversion(),
+            fetchMonthlyRevenue(),
+            fetchMonthlySpendsRevenue(),
+            fetchMonthlyConversionRevenue(),
+        ]);
+    }, [
+        fetchLabelSpends,
+        fetchLabelRevenue,
+        fetchLabelConversion,
+        fetchMonthlySpendsConversion,
+        fetchMonthlyRevenueConversion,
+        fetchMonthlyAttributedConversion,
+        fetchMonthlyRevenue,
+        fetchMonthlySpendsRevenue,
+        fetchMonthlyConversionRevenue,
+    ]);
 
     useEffect(() => {
-        onServerLogs();
+        onFetchChartData();
     }, []);
 
-    console.log(serverLogs, '-=-=-=->>>');
-
-    useEffect(() => {
-        setMemoryData({
-            labels: serverLogs.map((logs) => {
-                const val = new Date(logs.timestamp);
-                return formatTimestamp(val);
-            }),
-            datasets: [
-                {
-                    label: 'Available Memory (GB)',
-                    data: serverLogs.map((logs) => formatBytes(logs.memory.free)),
-                    backgroundColor: 'green',
-                },
-                {
-                    label: 'Used Memory (GB)',
-                    data: serverLogs.map((logs) => formatBytes(logs.memory.used)),
-                    backgroundColor: 'red',
-                },
-            ],
-        });
-        setNetworkTrafficData({
-            labels: serverLogs.map((logs) => {
-                const val = new Date(logs.timestamp);
-                return formatTimestamp(val);
-            }),
-            datasets: [
-                {
-                    label: 'Received (GB)',
-                    data: serverLogs.map((logs) => formatBytes(logs.networkStats[0].rx_bytes)),
-                    backgroundColor: 'green',
-                },
-                {
-                    label: 'Transferred (GB)',
-                    data: serverLogs.map((logs) => formatBytes(logs.networkStats[0].tx_bytes)),
-                    backgroundColor: 'red',
-                },
-            ],
-        });
-        setLoadAvgData({
-            labels: serverLogs.map((logs) => {
-                const val = new Date(logs.timestamp);
-                return formatTimestamp(val);
-            }),
-            datasets: [
-                {
-                    label: 'Load Avg 1',
-                    data: serverLogs.map((logs) => logs.loadAvg[0]),
-                    backgroundColor: 'green',
-                },
-                {
-                    label: 'Load Avg 2',
-                    data: serverLogs.map((logs) => logs.loadAvg[1]),
-                    backgroundColor: 'yellow',
-                },
-                {
-                    label: 'Load Avg 3',
-                    data: serverLogs.map((logs) => logs.loadAvg[2]),
-                    backgroundColor: 'red',
-                },
-            ],
-        });
-        setDiskIOData({
-            labels: serverLogs.map((logs) => {
-                const val = new Date(logs.timestamp);
-                return formatTimestamp(val);
-            }),
-            datasets: [
-                {
-                    label: 'Data Read (Bytes)',
-                    data: serverLogs.map((logs) => logs.disksIO?.rIO),
-                    backgroundColor: 'green',
-                },
-                {
-                    label: 'Read Speed (Bytes)',
-                    data: serverLogs.map((logs) => logs.disksIO?.rIO_sec),
-                    backgroundColor: 'red',
-                },
-                {
-                    label: 'Data Write (Bytes)',
-                    data: serverLogs.map((logs) => logs.disksIO?.wIO),
-                    backgroundColor: 'blue',
-                },
-                {
-                    label: 'Write Speed (Bytes)',
-                    data: serverLogs.map((logs) => logs.disksIO?.wIO_sec),
-                    backgroundColor: 'yellow',
-                },
-            ],
-        });
-    }, [serverLogs]);
+    // useEffect(() => {
+    //     setMemoryData({
+    //         labels: serverLogs.map((logs) => {
+    //             const val = new Date(logs.timestamp);
+    //             return formatTimestamp(val);
+    //         }),
+    //         datasets: [
+    //             {
+    //                 label: 'Available Memory (GB)',
+    //                 data: serverLogs.map((logs) => formatBytes(logs.memory.free)),
+    //                 backgroundColor: 'green',
+    //             },
+    //             {
+    //                 label: 'Used Memory (GB)',
+    //                 data: serverLogs.map((logs) => formatBytes(logs.memory.used)),
+    //                 backgroundColor: 'red',
+    //             },
+    //         ],
+    //     });
+    //     setNetworkTrafficData({
+    //         labels: serverLogs.map((logs) => {
+    //             const val = new Date(logs.timestamp);
+    //             return formatTimestamp(val);
+    //         }),
+    //         datasets: [
+    //             {
+    //                 label: 'Received (GB)',
+    //                 data: serverLogs.map((logs) => formatBytes(logs.networkStats[0].rx_bytes)),
+    //                 backgroundColor: 'green',
+    //             },
+    //             {
+    //                 label: 'Transferred (GB)',
+    //                 data: serverLogs.map((logs) => formatBytes(logs.networkStats[0].tx_bytes)),
+    //                 backgroundColor: 'red',
+    //             },
+    //         ],
+    //     });
+    //     setLoadAvgData({
+    //         labels: serverLogs.map((logs) => {
+    //             const val = new Date(logs.timestamp);
+    //             return formatTimestamp(val);
+    //         }),
+    //         datasets: [
+    //             {
+    //                 label: 'Load Avg 1',
+    //                 data: serverLogs.map((logs) => logs.loadAvg[0]),
+    //                 backgroundColor: 'green',
+    //             },
+    //             {
+    //                 label: 'Load Avg 2',
+    //                 data: serverLogs.map((logs) => logs.loadAvg[1]),
+    //                 backgroundColor: 'yellow',
+    //             },
+    //             {
+    //                 label: 'Load Avg 3',
+    //                 data: serverLogs.map((logs) => logs.loadAvg[2]),
+    //                 backgroundColor: 'red',
+    //             },
+    //         ],
+    //     });
+    //     setDiskIOData({
+    //         labels: serverLogs.map((logs) => {
+    //             const val = new Date(logs.timestamp);
+    //             return formatTimestamp(val);
+    //         }),
+    //         datasets: [
+    //             {
+    //                 label: 'Data Read (Bytes)',
+    //                 data: serverLogs.map((logs) => logs.disksIO?.rIO),
+    //                 backgroundColor: 'green',
+    //             },
+    //             {
+    //                 label: 'Read Speed (Bytes)',
+    //                 data: serverLogs.map((logs) => logs.disksIO?.rIO_sec),
+    //                 backgroundColor: 'red',
+    //             },
+    //             {
+    //                 label: 'Data Write (Bytes)',
+    //                 data: serverLogs.map((logs) => logs.disksIO?.wIO),
+    //                 backgroundColor: 'blue',
+    //             },
+    //             {
+    //                 label: 'Write Speed (Bytes)',
+    //                 data: serverLogs.map((logs) => logs.disksIO?.wIO_sec),
+    //                 backgroundColor: 'yellow',
+    //             },
+    //         ],
+    //     });
+    // }, [serverLogs]);
 
     const chartConfigs = (label: string) => {
         return {
@@ -155,7 +184,7 @@ export const ChartsPage: FC = () => {
         <>
             <Title>
                 <h1>Ad Campaign Data Visualization</h1>
-                <Text onClick={onServerLogs}>&#x21bb; Refresh</Text>
+                <Text onClick={onFetchChartData}>&#x21bb; Refresh</Text>
             </Title>
             <ChartBox>
                 <ChartCard>
