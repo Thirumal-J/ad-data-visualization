@@ -1,0 +1,56 @@
+{
+    // Make sure eslint picks up the config at the root of the directory
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        // Use ecmascript version 12,
+        "ecmaVersion": 12,
+        // Allows using import/export statements,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            // Enable JSX since we're using React,
+            "jsx": true
+        }
+    },
+    "settings": {
+        "react": {
+            // Automatically detect the react version,
+            "version": "detect"
+        }
+    },
+    "env": {
+        // Enables browser globals like window and document,
+        "browser": true,
+        // Enables require() and define() as global variables as per the amd spec.,
+        "amd": true,
+        // Enables Node.js global variables and Node.js scoping.,
+        "node": true
+    },
+    "extends": [
+        "next/core-web-vitals",
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:jsx-a11y/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        // Make this the last element so prettier config overrides other formatting rules,
+        "plugin:prettier/recommended"
+    ],
+    "ignorePatterns": [".idea", "node_modules", "test"],
+    "plugins": ["simple-import-sort"],
+    "rules": {
+        // Use our .prettierrc file as source,
+        "prettier/prettier": ["error", {}, { "usePrettierrc": true }],
+        "react/react-in-jsx-scope": "off",
+        "jsx-a11y/anchor-is-valid": [
+            "error",
+            {
+                "components": ["Link"],
+                "specialLink": ["hrefLeft", "hrefRight"],
+                "aspects": ["invalidHref", "preferButton"]
+            }
+        ],
+        "@typescript-eslint/no-empty-function": "off",
+        "react/prop-types": "off"
+    }
+}

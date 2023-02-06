@@ -1,0 +1,191 @@
+/* 100 - Thin (Hairline) */
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 100;
+    font-style: normal;
+    src: url('/fonts/3B2B21_0_0.woff2') format('woff2'), url('/fonts/3B2B21_0_0.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 100;
+    font-style: italic;
+    src: url('/fonts/3B2B21_2_0.woff2') format('woff2'), url('/fonts/3B2B21_2_0.woff') format('woff');
+}
+
+/* 200 - 	Extra Light (Ultra Light) */
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 200;
+    font-style: normal;
+    src: url('/fonts/3B2B21_5_0.woff2') format('woff2'), url('/fonts/3B2B21_5_0.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 200;
+    font-style: italic;
+    src: url('/fonts/3B2B21_1_0.woff2') format('woff2'), url('/fonts/3B2B21_1_0.woff') format('woff');
+}
+
+/* 300 - 	Light */
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 300;
+    font-style: normal;
+    src: url('/fonts/3B2B21_B_0.woff2') format('woff2'), url('/fonts/3B2B21_B_0.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 300;
+    font-style: italic;
+    src: url('/fonts/3B2B21_A_0.woff2') format('woff2'), url('/fonts/3B2B21_A_0.woff') format('woff');
+}
+
+/* 400 - 	Normal */
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 400;
+    font-style: normal;
+    src: url('/fonts/3B2B21_6_0.woff2') format('woff2'), url('/fonts/3B2B21_6_0.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 400;
+    font-style: italic;
+    src: url('/fonts/3B2B21_7_0.woff2') format('woff2'), url('/fonts/3B2B21_7_0.woff') format('woff');
+}
+
+/* 500 - 	Medium */
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 500;
+    font-style: normal;
+    src: url('/fonts/3B2B21_9_0.woff2') format('woff2'), url('/fonts/3B2B21_9_0.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 500;
+    font-style: italic;
+    src: url('/fonts/3B2B21_8_0.woff2') format('woff2'), url('/fonts/3B2B21_8_0.woff') format('woff');
+}
+
+/* 600 - 	Semi Bold (Demi Bold) */
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 600;
+    font-style: normal;
+    src: url('/fonts/3B2B21_4_0.woff2') format('woff2'), url('/fonts/3B2B21_4_0.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 600;
+    font-style: italic;
+    src: url('/fonts/3B2B21_3_0.woff2') format('woff2'), url('/fonts/3B2B21_3_0.woff') format('woff');
+}
+
+/* 700 - 	Bold */
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 700;
+    font-style: normal;
+    src: url('/fonts/3B2B21_11_0.woff2') format('woff2'), url('/fonts/3B2B21_11_0.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 700;
+    font-style: italic;
+    src: url('/fonts/3B2B21_10_0.woff2') format('woff2'), url('/fonts/3B2B21_10_0.woff') format('woff');
+}
+
+/* 800 - 	Extra Bold (Ultra Bold) */
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 800;
+    font-style: normal;
+    src: url('/fonts/3B2B21_F_0.woff2') format('woff2'), url('/fonts/3B2B21_F_0.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 800;
+    font-style: italic;
+    src: url('/fonts/3B2B21_E_0.woff2') format('woff2'), url('/fonts/3B2B21_E_0.woff') format('woff');
+}
+
+/* 900 - 	Black */
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 900;
+    font-style: normal;
+    src: url('/fonts/3B2B21_13_0.woff2') format('woff2'), url('/fonts/3B2B21_13_0.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Gilroy';
+    font-weight: 900;
+    font-style: italic;
+    src: url('/fonts/3B2B21_12_0.woff2') format('woff2'), url('/fonts/3B2B21_12_0.woff') format('woff');
+}
+
+/* 950 - Heavy */
+
+@font-face {
+    font-family: 'Gilroy-Heavy';
+    font-weight: 400;
+    font-style: normal;
+    src: url('/fonts/3B2B21_D_0.woff2') format('woff2'), url('/fonts/3B2B21_D_0.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Gilroy-Heavy';
+    font-weight: 400;
+    font-style: italic;
+    src: url('/fonts/3B2B21_C_0.woff2') format('woff2'), url('/fonts/3B2B21_C_0.woff') format('woff');
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* Works on Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #22222288 transparent;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #22222288;
+    border-radius: 4px;
+    border: 3px solid transparent;
+}

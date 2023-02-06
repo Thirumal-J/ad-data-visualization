@@ -7,7 +7,8 @@ services:
     restart: always
     environment:
       - MYSQL_DATABASE=ad_campaign
-      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_ROOT_HOST=0.0.0.0
+      - MYSQL_USER=root
     ports:
       - '3306:3306'
     volumes:

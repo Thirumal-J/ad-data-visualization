@@ -1,0 +1,171 @@
+variables:
+  DOCKER_HOST: "tcp://dsg-dind-svc:2375"
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+  TARGET: air-signage-monitor
+  REPOSITORY: signage-monitor
+  GIT_USER_ENVIRONMENT: ${GIT_USER_${GITLAB_USER_ID}}
+
+stages:
+  - prerequities
+  - test
+  - code-quality
+  - package
+  - image-quality
+  - deploy
+
+include:
+ - project: 'workgroup-ci-cd/common-ci-lib'
+   ref: master
+   file:
+     - '/templates/code-scan/.code-scan-template.yml'
+
+check:
+  stage: prerequities
+  script:
+    - 'echo Current environent: $GIT_USER_ENVIRONMENT'
+    - >
+      if [[ -z $GIT_USER_ENVIRONMENT ]]; then
+        exit 1
+      fi;
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master" && $CI_PIPELINE_SOURCE == "push"'
+
+lint:
+  stage: test
+  image: node:16.13-alpine
+  allow_failure: false
+  before_script:
+    - yarn install
+  script:
+    - yarn lint
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^(feature|hotfix|bugfix).*$/ && $CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH =~ /^(release)\/v\d+.\d+(.\d+)?$/ && $CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME != "master"'
+      when: never
+
+code-scan:
+  stage: code-quality
+  script: 
+    - sonar-scanner -Dproject.settings=sonar-project.properties
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^(feature|hotfix|bugfix).*$/ && $CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH =~ /^(release)\/v\d+.\d+(.\d+)?$/ && $CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME != "master"'
+      when: never
+
+.package-base: &package-base
+  stage: package
+  image: docker:19.03.12
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker info
+  script:
+    - IMAGE_TAG="$CI_REGISTRY_IMAGE/$REF_SLUG"
+
+    - docker build -f ./docker/dockerfile-staging -t $TARGET .
+
+    - docker tag $TARGET $IMAGE_TAG:$VERSION
+    - docker push $IMAGE_TAG:$VERSION
+
+    - docker tag $TARGET $IMAGE_TAG:latest
+    - docker push $IMAGE_TAG:latest
+
+package-branch:
+  stage: package
+  <<: *package-base
+  variables: 
+    REF_SLUG: $CI_COMMIT_REF_SLUG
+    VERSION: $CI_COMMIT_SHORT_SHA
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^(feature|hotfix|bugfix).*$/ && $CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH =~ /^(release)\/v\d+.\d+(.\d+)?$/ && $CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME != "master"'
+      when: never
+
+package-release:
+  stage: package
+  <<: *package-base
+  variables: 
+    REF_SLUG: release
+    VERSION: $CI_COMMIT_TAG
+  only:
+    - tags
+    - master
+  except:
+    - branches
+
+.cve-image-scan: &cve-image-scan-base
+  stage: image-quality
+  image:
+    name: aquasec/trivy
+    entrypoint: [""]
+  script:
+    - export TRIVY_USERNAME=$CI_REGISTRY_USER
+    - export TRIVY_PASSWORD=$CI_REGISTRY_PASSWORD
+    - trivy image
+      --exit-code 1
+      --no-progress
+      --format template
+      --template "@$CI_PROJECT_DIR/sonarqube.tpl"
+      --output trivy_report.json
+      $IMAGE_PATH
+  allow_failure: true
+  cache:
+    paths:
+      - .trivycache/
+  artifacts:
+    paths:
+      - trivy_report.json
+    when: always
+
+image-scan-branch:
+  stage: image-quality
+  <<: *cve-image-scan-base
+  variables:
+    IMAGE_PATH: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHORT_SHA
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^(feature|hotfix|bugfix).*$/ && $CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH =~ /^(release)\/v\d+.\d+(.\d+)?$/ && $CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME != "master"'
+      when: never
+
+image-scan-release:
+  stage: image-quality
+  <<: *cve-image-scan-base
+  variables:
+    IMAGE_PATH: $CI_REGISTRY_IMAGE/release:$CI_COMMIT_TAG
+  only:
+    - tags
+    - master
+  except:
+    - branches
+
+deploy-test:
+  stage: deploy
+  variables:
+    KUBE_ENV_NAME: $GIT_USER_ENVIRONMENT
+    KUBE_ENV_IMAGE: $CI_COMMIT_REF_SLUG:$CI_COMMIT_SHORT_SHA
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^(feature|hotfix|bugfix).*$/ && $CI_PIPELINE_SOURCE == "merge_request_event"'
+  trigger: cds-air/deployment
+
+deploy-integration:
+  stage: deploy
+  variables:
+    KUBE_ENV_NAME: integration
+    KUBE_ENV_IMAGE: $CI_COMMIT_REF_SLUG:$CI_COMMIT_SHORT_SHA
+  only:
+    - /^release\/v\d+.\d+(.\d+)?$/
+  trigger: cds-air/deployment
+
+deploy-integration-check:
+  stage: deploy
+  variables:
+    KUBE_ENV_NAME: integration
+    KUBE_ENV_IMAGE: $CI_COMMIT_REF_SLUG:latest
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME !~ /^hotfix.*$/ && $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+  trigger: cds-air/deployment

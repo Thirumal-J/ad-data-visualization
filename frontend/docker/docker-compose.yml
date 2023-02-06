@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  air-signage-monitor:
+    image: aerq/air-signage-monitor
+    container_name: 'air-signage-monitor'
+    build:
+      context: ..
+      dockerfile: ./docker/dockerfile-local
+    ports:
+      - "6156:6156"
+    volumes:
+      - ..:/signage-monitor
+      - /signage-monitor/node_modules
+networks:
+  default:
+    external:
+      name: aerq-network

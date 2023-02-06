@@ -1,0 +1,14 @@
+FROM node:16.13-alpine
+
+RUN mkdir /signage-monitor
+WORKDIR /signage-monitor
+
+COPY ./package.json /signage-monitor
+COPY ./.npmrc /signage-monitor
+COPY . /signage-monitor
+
+RUN yarn install
+
+RUN yarn set-env docker
+
+CMD ["yarn", "dev"]

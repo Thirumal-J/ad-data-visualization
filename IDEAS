@@ -1,0 +1,58 @@
+IDEA 1
+
+BAR CHART
+
+spends, conversions, revenue - plotted against LABEL
+
+SELECT label, sum(spends), sum(attributed_conversions), sum(attributed_revenue) from campaign_data GROUP by label HAVING sum(spends) IS NOT NULL ORDER BY label ASC;
+ 
+BEST ANSWER -  SELECT label, sum(spends), sum(attributed_conversions), sum(attributed_revenue) from campaign_data GROUP by label ORDER BY label ASC;
+
+
+------------------------------------------------------------------------------------------
+
+IDEA 2
+
+PIE CHART 
+
+SAME QUERY
+
+
+-----------------------------------------------------
+
+IDEA 3
+
+OPTIMISATION TARGET = CONVERSION --- multi line graph
+
+SELECT label, sum(spends) as Monthly_Spends, MONTHNAME(date) Month_Name FROM campaign_data 
+WHERE optimisation_target='conversions'
+GROUP BY MONTHNAME(date), MONTH(date), label HAVING sum(spends) IS NOT NULL ORDER BY MONTH(date) ASC;
+
+SELECT label, sum(attributed_revenue) as Monthly_Revenue, MONTHNAME(date) Month_Name FROM campaign_data 
+WHERE optimisation_target='conversions'
+GROUP BY MONTHNAME(date), MONTH(date), label HAVING sum(attributed_revenue) IS NOT NULL ORDER BY MONTH(date) ASC;
+
+SELECT label, sum(attributed_conversions) as Monthly_Conversions, MONTHNAME(date) Month_Name FROM campaign_data 
+WHERE optimisation_target='conversions'
+GROUP BY MONTHNAME(date), MONTH(date), label HAVING sum(attributed_conversions) IS NOT NULL ORDER BY MONTH(date) ASC;
+
+
+
+
+-----------------------------------------------------------------------
+OPTIMISATION TARGET = REVENUE
+
+
+
+SELECT label, sum(spends) as Monthly_Spends, MONTHNAME(date) Month_Name FROM campaign_data 
+WHERE optimisation_target='revenue'
+GROUP BY MONTHNAME(date), MONTH(date), label HAVING sum(spends) IS NOT NULL ORDER BY MONTH(date) ASC;
+
+SELECT label, sum(attributed_revenue) as Monthly_Revenue, MONTHNAME(date) Month_Name FROM campaign_data 
+WHERE optimisation_target='revenue'
+GROUP BY MONTHNAME(date), MONTH(date), label HAVING sum(attributed_revenue) IS NOT NULL ORDER BY MONTH(date) ASC;
+
+SELECT label, sum(attributed_conversions) as Monthly_Conversions, MONTHNAME(date) Month_Name FROM campaign_data 
+WHERE optimisation_target='revenue'
+GROUP BY MONTHNAME(date), MONTH(date), label HAVING sum(attributed_conversions) IS NOT NULL ORDER BY MONTH(date) ASC;
+
